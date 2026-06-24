@@ -1,0 +1,46 @@
+:root {
+  /* קבועי צבעים - מערכת הליבה של Warrantly */
+  --primary-color: #4F46E5;       /* אינדיגו עמוק - צבע מותג ראשי */
+  --primary-hover: #4338CA;
+  --secondary-color: #10B981;     /* ירוק הצלחה - עבור שמירה ותוקף תקין */
+  --danger-color: #EF4444;        /* אדום התראה - עבור פגי תוקף ומחיקה */
+  --warning-color: #F59E0B;       /* כתום - התראת תפוגה מתקרבת */
+  
+  /* צבעי רקע וטקסט */
+  --background-light: #F9FAFB;    /* רקע אפליקציה כללי */
+  --surface-white: #FFFFFF;       /* רקע כרטיסיות ומסכים */
+  --text-main: #111827;           /* טקסט כותרות כהה */
+  --text-muted: #6B7280;          /* טקסט משני/אפור */
+  --border-color: #E5E7EB;        /* קווי הפרדה */
+
+  /* גופנים ומרווחים */
+  --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --transition-fast: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+/* עיצוב בסיסי גלובלי לחלוטין */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-main);
+}
+
+body {
+  background-color: var(--background-light);
+  color: var(--text-main);
+  direction: rtl; /* התאמה לשפת הממשק בעברית */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
