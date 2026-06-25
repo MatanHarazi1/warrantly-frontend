@@ -39,7 +39,7 @@ export default function ItemDetailsPage() {
 
       if (tasksData) setTasks(tasksData);
     }
-    loading && setLoading(false);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -150,9 +150,35 @@ export default function ItemDetailsPage() {
           </p>
         )}
         
-        <p style={{ margin: '8px 0', fontSize: '13px', color: '#666' }}>
+        <p style={{ margin: '8px 0', fontSize: '13px', color: '#666', marginBottom: '15px' }}>
           <strong>תאריך הוספה למערכת:</strong> {new Date(item.created_at).toLocaleDateString('he-IL')}
         </p>
+
+        {/* כפתור דינמי להצגת הקבלה מה-Storage (התוספת החדשה!) */}
+        {item.file_url ? (
+          <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid #eee' }}>
+            <button
+              onClick={() => window.open(item.file_url, '_blank')}
+              style={{
+                padding: '8px 15px',
+                backgroundColor: '#2196F3',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                fontSize: '13px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              📄 הצג קבלה סרוקה
+            </button>
+          </div>
+        ) : (
+          <p style={{ margin: '10px 0 0 0', fontSize: '12px', color: '#999', fontStyle: 'italic' }}>לא הועלה צילום קבלה עבור מכשיר זה.</p>
+        )}
       </div>
 
       {/* --- ניהול משימות וטיפולים --- */}
