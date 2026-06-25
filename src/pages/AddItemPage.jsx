@@ -71,45 +71,44 @@ export default function AddItemPage() {
       setLoading(false);
     }
   };
-
-  return (
-    <div style={{ maxWidth: '500px', margin: '30px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
-      <h2>הוספת תעודת אחריות חדשה</h2>
+return (
+    <div style={{ maxWidth: '500px', margin: '30px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px', direction: 'rtl' }}>
+      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>הוספת תעודת אחריות חדשה</h2>
       <form onSubmit={handleSubmit}>
         
         {/* שם המוצר */}
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>שם המוצר:</label>
+        <div style={{ marginBottom: '15px', textAlign: 'right' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>שם המוצר:</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+            style={{ width: '100%', padding: '10px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
             placeholder="למשל: מכונת כביסה"
           />
         </div>
 
         {/* חברה / חנות */}
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>חברה / חנות:</label>
+        <div style={{ marginBottom: '15px', textAlign: 'right' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>חברה / חנות:</label>
           <input
             type="text"
             value={company}
             onChange={(e) => setCompany(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+            style={{ width: '100%', padding: '10px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
             placeholder="למשל: סמסונג"
           />
         </div>
 
-        {/* קטגוריה - חדש! */}
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>קטגוריה:</label>
+        {/* קטגוריה */}
+        <div style={{ marginBottom: '15px', textAlign: 'right' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>קטגוריה:</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box', background: '#fff', border: '1px solid #ccc', borderRadius: '2px' }}
+            style={{ width: '100%', padding: '10px', boxSizing: 'border-box', background: '#fff', border: '1px solid #ccc', borderRadius: '4px' }}
           >
             <option value="">בחר קטגוריה (אופציונלי)</option>
             <option value="מוצרי חשמל">מוצרי חשמל</option>
@@ -121,41 +120,41 @@ export default function AddItemPage() {
           </select>
         </div>
 
-        {/* מחיר רכישה - חדש! */}
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>מחיר רכישה (בש"ח):</label>
+        {/* מחיר רכישה */}
+        <div style={{ marginBottom: '15px', textAlign: 'right' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>מחיר רכישה (בש"ח):</label>
           <input
             type="number"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             min="0"
             step="any"
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+            style={{ width: '100%', padding: '10px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
             placeholder="למשל: 2500"
           />
         </div>
 
-        {/* מספר סידורי / דגם - חדש! */}
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>מספר סידורי / דגם:</label>
+        {/* מספר סידורי / דגם */}
+        <div style={{ marginBottom: '15px', textAlign: 'right' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>מספר סידורי / דגם:</label>
           <input
             type="text"
             value={serialNumber}
             onChange={(e) => setSerialNumber(e.target.value)}
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+            style={{ width: '100%', padding: '10px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
             placeholder="למשל: S/N: 12345678"
           />
         </div>
 
         {/* תאריך פקיעה */}
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>תאריך פקיעת אחריות:</label>
+        <div style={{ marginBottom: '20px', textAlign: 'right' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>תאריך פקיעת אחריות:</label>
           <input
             type="date"
             value={warrantyExpiration}
             onChange={(e) => setWarrantyExpiration(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+            style={{ width: '100%', padding: '10px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
           />
         </div>
 
@@ -165,12 +164,14 @@ export default function AddItemPage() {
           disabled={loading}
           style={{
             width: '100%',
-            padding: '10px',
+            padding: '12px',
             backgroundColor: '#4CAF50',
             color: 'white',
             border: 'none',
             borderRadius: '4px',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: 'bold'
           }}
         >
           {loading ? 'שומר פריט...' : 'שמור פריט'}
