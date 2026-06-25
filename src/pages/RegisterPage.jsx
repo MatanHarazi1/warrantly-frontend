@@ -10,7 +10,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   // בדיקה אם המשתמש כבר מחובר, ואם כן - העברה לעמוד הבית
-  React.useEffect(() => {
+  useEffect(() => {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
