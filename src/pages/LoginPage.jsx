@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2';
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
@@ -20,9 +21,23 @@ function LoginPage() {
     setLoading(false);
 
     if (error) {
-      alert('Invalid email or password');
-    } else {
-      navigate('/');
+  Swal.fire({
+    icon: 'error',
+    title: 'פרטי התחברות שגויים',
+    text: 'האימייל או הסיסמה שהזנת אינם נכונים, אנא נסה שוב.',
+    confirmButtonText: 'אישור',
+    confirmButtonColor: '#10b981'
+  });
+} else {
+  Swal.fire({
+    icon: 'success',
+    title: 'התחברת בהצלחה!',
+    showConfirmButton: false,
+    timer: 1500 // החלונית תיסגר לבד אחרי שנייה וחצי
+  }).then(() => {
+    navigate('/');
+  });
+
     }
   };
 

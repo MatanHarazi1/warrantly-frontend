@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2';
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -66,7 +67,13 @@ export default function ItemDetailsPage() {
       setNewTaskTitle('');
       fetchItemAndTasks(); // רענון מהיר על המסך
     } else {
-      alert('שגיאה בהוספת משימה: ' + error.message);
+     Swal.fire({
+  icon: 'error',
+  title: 'שגיאה בהוספת המשימה',
+  text: 'לא הצלחנו לשמור את המשימה החדשה.',
+  confirmButtonText: 'אישור',
+  confirmButtonColor: '#10b981'
+});;
     }
   };
 

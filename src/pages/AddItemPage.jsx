@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2';
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
@@ -18,7 +19,13 @@ export default function AddItemPage() {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
 
       if (userError || !user) {
-        alert('עליך להיות מחובר כדי להוסיף פריט');
+       Swal.fire({
+  icon: 'warning',
+  title: 'שדות חובה',
+  text: 'אנא מלא את כל שדות החובה.',
+  confirmButtonText: 'הבנתי',
+  confirmButtonColor: '#10b981'
+});;
         navigate('/login');
         return;
       }
@@ -37,10 +44,21 @@ export default function AddItemPage() {
         throw error;
       }
 
-      alert('הפריט נוסף בהצלחה!');
+      Swal.fire({
+  icon: 'success',
+  title: 'המוצר נוסף בהצלחה!',
+  showConfirmButton: false,
+  timer: 1500
+});
       navigate('/'); // מחזיר את המשתמש ללוח הבקרה
     } catch (error) {
-      alert('שגיאה בהוספת הפריט: ' + error.message);
+      Swal.fire({
+  icon: 'error',
+  title: 'שגיאה בשמירה',
+  text: 'לא הצלחנו להוסיף את המכשיר לבסיס הנתונים.',
+  confirmButtonText: 'אישור',
+  confirmButtonColor: '#10b981'
+});
     } finally {
       setLoading(false);
     }

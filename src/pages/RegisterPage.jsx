@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2'; 
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
@@ -5,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState(''); 
+  const [fullName, setFullName] = useState(''); // שדה חדש לשם המלא
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -14,23 +15,40 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      // שמירת המשתמש יחד עם השם המלא שלו בתוך ה-Metadata המובנה
+      // 1. יצירת המשתמש ב-Supabase Auth
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          data: {
-            full_name: fullName // נשמר ישירות בתוך ה-Auth של המשתמש
-          }
-        }
       });
 
       if (error) throw error;
 
-      alert('הרשמה בוצעה בהצלחה! כעת ניתן להתחבר.');
-      navigate('/login');
+      if (data?.user) {
+        // 2. הכנסת השם המלא לטבלת profiles החדשה
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([{ id: data.user.id, full_name: fullName }]);
+
+        if (profileError) throw profileError;
+      }
+
+      Swal.fire({
+  icon: 'success',
+  title: 'הרשמה בוצעה בהצלחה!',
+  text: 'כעת ניתן להתחבר למערכת עם הפרטים שלך.',
+  confirmButtonText: 'מעולה, לעמוד ההתחברות',
+  confirmButtonColor: '#10b981'
+}).then(() => {
+  navigate('/login');
+});
     } catch (error) {
-      alert('שגיאה בהרשמה: ' + error.message);
+      Swal.fire({
+  icon: 'error',
+  title: 'אופס... שגיאה בהרשמה',
+  text: error.message,
+  confirmButtonText: 'נסה שוב',
+  confirmButtonColor: '#10b981'
+});
     } finally {
       setLoading(false);
     }

@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from './lib/supabase';
@@ -54,9 +55,21 @@ function App() {
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
-      alert('שגיאה בהתנתקות: ' + error.message);
+      Swal.fire({
+  icon: 'error',
+  title: 'אופס...',
+  text: 'שגיאה בהתנתקות מהמערכת',
+  confirmButtonText: 'אישור',
+  confirmButtonColor: '#10b981'
+});
     } else {
-      alert('התנתקת בהצלחה!');
+     Swal.fire({
+  icon: 'success',
+  title: 'התנתקת בהצלחה',
+  text: 'להתראות!',
+  showConfirmButton: false,
+  timer: 1500
+});
       window.location.href = '/login';
     }
   };

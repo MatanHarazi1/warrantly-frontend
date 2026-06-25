@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2';
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
@@ -65,9 +66,15 @@ export default function DashboardPage() {
       // רענון הרשימה על המסך
       fetchDashboardData();
     } catch (error) {
-      alert('שגיאה במחיקת הפריט: ' + error.message);
+Swal.fire({
+  icon: 'error',
+  title: 'שגיאה במחיקה',
+  text: 'לא הצלחנו למחוק את הפריט, אנא נסה שוב.',
+  confirmButtonText: 'אישור',
+  confirmButtonColor: '#10b981'
+});
     }
-  };
+}
 
   if (loading) {
     return <div style={{ padding: '20px' }}>טוען את לוח הבקרה...</div>;
