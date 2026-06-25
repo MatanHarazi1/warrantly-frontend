@@ -35,6 +35,7 @@ export default function RegisterPage() {
       Swal.fire({
   icon: 'success',
   title: 'הרשמה בוצעה בהצלחה!',
+text: 'כעת ניתן להתחבר למערכת עם הפרטים שלך',
   text: 'כעת ניתן להתחבר למערכת עם הפרטים שלך.',
   confirmButtonText: 'מעולה, לעמוד ההתחברות',
   confirmButtonColor: '#10b981'
