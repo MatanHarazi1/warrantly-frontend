@@ -87,14 +87,7 @@ const handleForgotPassword = async () => {
             required 
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
           />
-          <div style={{ textAlign: 'left', marginBottom: '15px' }}>
-  <span 
-    onClick={handleForgotPassword} 
-    style={{ color: '#4CAF50', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 'bold' }}
-  >
-    שכחתי סיסמה?
-  </span>
-</div>
+         
         </div>
         <div style={{ marginBottom: '15px' }}>
           <label style={{ display: 'block', marginBottom: '5px' }}>סיסמה:</label>
@@ -105,6 +98,14 @@ const handleForgotPassword = async () => {
             required 
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
           />
+          <div style={{ textAlign: 'left', marginBottom: '15px' }}>
+  <span 
+    onClick={handleForgotPassword} 
+    style={{ color: '#4CAF50', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 'bold' }}
+  >
+    שכחתי סיסמה?
+  </span>
+</div>
         </div>
         <button type="submit" disabled={loading} style={{ width: '100%', padding: '10px', backgroundColor: '#008CBA', color: 'white', border: 'none', cursor: 'pointer' }}>
           {loading ? 'מתחבר...' : 'התחבר'}
