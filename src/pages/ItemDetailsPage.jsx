@@ -12,7 +12,7 @@ export default function ItemDetailsPage() {
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // שליפת פרטי המוצר והמשימות המשויכות אליו (Read - Step 18)
+  // שליפת פרטי המוצר והמשימות המשויכות אליו
   const fetchItemAndTasks = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -39,14 +39,14 @@ export default function ItemDetailsPage() {
 
       if (tasksData) setTasks(tasksData);
     }
-    setLoading(false);
+    loading && setLoading(false);
   };
 
   useEffect(() => {
     fetchItemAndTasks();
   }, [itemId]);
 
-  // הוספת משימה חדשה למוצר (Create - Step 18)
+  // הוספת משימה חדשה למוצר
   const handleAddTask = async (e) => {
     e.preventDefault();
     if (!newTaskTitle.trim()) return;
@@ -67,17 +67,17 @@ export default function ItemDetailsPage() {
       setNewTaskTitle('');
       fetchItemAndTasks(); // רענון מהיר על המסך
     } else {
-     Swal.fire({
-  icon: 'error',
-  title: 'שגיאה בהוספת המשימה',
-  text: 'לא הצלחנו לשמור את המשימה החדשה.',
-  confirmButtonText: 'אישור',
-  confirmButtonColor: '#10b981'
-});;
+      Swal.fire({
+        icon: 'error',
+        title: 'שגיאה בהוספת המשימה',
+        text: 'לא הצלחנו לשמור את המשימה החדשה.',
+        confirmButtonText: 'אישור',
+        confirmButtonColor: '#10b981'
+      });
     }
   };
 
-  // עדכון סטטוס משימה בוצע/לא בוצע (Update - Step 18)
+  // עדכון סטטוס משימה בוצע/לא בוצע
   const handleToggleTask = async (taskId, currentStatus) => {
     const { error } = await supabase
       .from('tasks')
@@ -89,7 +89,7 @@ export default function ItemDetailsPage() {
     }
   };
 
-  // מחיקת משימה מהרשימה (Delete - Step 18)
+  // מחיקת משימה מהרשימה
   const handleDeleteTask = async (taskId) => {
     const confirmDelete = window.confirm('האם למחוק משימה זו?');
     if (!confirmDelete) return;
@@ -104,34 +104,58 @@ export default function ItemDetailsPage() {
     }
   };
 
-  if (loading) return <div style={{ padding: '20px' }}>טוען נתונים...</div>;
-  if (!item) return <div style={{ padding: '20px' }}>המוצר לא נמצא.</div>;
+  if (loading) return <div style={{ padding: '20px', textAlign: 'center', direction: 'rtl' }}>טוען נתונים...</div>;
+  if (!item) return <div style={{ padding: '20px', textAlign: 'center', direction: 'rtl' }}>המוצר לא נמצא.</div>;
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
+    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', direction: 'rtl', textAlign: 'right' }}>
       <button 
         onClick={() => navigate('/')} 
         style={{ 
           marginBottom: '20px', 
-          padding: '6px 12px', 
+          padding: '8px 14px', 
           cursor: 'pointer', 
           backgroundColor: '#e0e0e0', 
           border: 'none', 
           borderRadius: '4px',
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '5px'
         }}
       >
         ➔ חזרה ללוח הבקרה
       </button>
       
-      {/* תצוגת פרטי הפריט */}
+      {/* תצוגת פרטי הפריט המשודרגת */}
       <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '8px', backgroundColor: '#f9f9f9', marginBottom: '30px' }}>
-        <h2>{item.name}</h2>
-        <p><strong>חברה מיוצרת:</strong> {item.company}</p>
-        <p><strong>תאריך הוספה:</strong> {new Date(item.created_at).toLocaleDateString('he-IL')}</p>
+        <h2 style={{ marginTop: 0, color: '#333' }}>{item.name}</h2>
+        <p style={{ margin: '8px 0' }}><strong>חברה מיוצרת:</strong> {item.company}</p>
+        
+        {item.category && (
+          <p style={{ margin: '8px 0' }}><strong>קטגוריה:</strong> {item.category}</p>
+        )}
+        
+        {item.price && (
+          <p style={{ margin: '8px 0' }}><strong>מחיר רכישה:</strong> {Number(item.price).toLocaleString('he-IL')} ₪</p>
+        )}
+
+        {item.serial_number && (
+          <p style={{ margin: '8px 0' }}><strong>מספר סידורי / דגם:</strong> {item.serial_number}</p>
+        )}
+
+        {item.warranty_expiration && (
+          <p style={{ margin: '8px 0', color: '#e53935' }}>
+            <strong>תאריך פקיעת אחריות:</strong> {new Date(item.warranty_expiration).toLocaleDateString('he-IL')}
+          </p>
+        )}
+        
+        <p style={{ margin: '8px 0', fontSize: '13px', color: '#666' }}>
+          <strong>תאריך הוספה למערכת:</strong> {new Date(item.created_at).toLocaleDateString('he-IL')}
+        </p>
       </div>
 
-      {/* --- ניהול משימות וטיפולים (Step 18 - CRUD) --- */}
+      {/* --- ניהול משימות וטיפולים --- */}
       <h3>משימות וטיפולים למכשיר זה:</h3>
       
       <form onSubmit={handleAddTask} style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
@@ -141,9 +165,9 @@ export default function ItemDetailsPage() {
           onChange={(e) => setNewTaskTitle(e.target.value)}
           placeholder="לדוגמה: להחליף פילטר, לחדש אחריות, לפנות למעבדה..."
           required
-          style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+          style={{ flex: 1, padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
         />
-        <button type="submit" style={{ padding: '8px 15px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>הוסף</button>
+        <button type="submit" style={{ padding: '10px 20px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>הוסף</button>
       </form>
 
       {tasks.length === 0 ? (
