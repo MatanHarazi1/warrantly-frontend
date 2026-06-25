@@ -11,7 +11,7 @@ export default function DashboardPage() {
 
   // סטייט לניהול ה-Modal המעוצב שלנו
   const [showModal, setShowModal] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState(null); // ישמור את ה-id והשם של הפריט שבחרנו למחוק
+  const [itemToDelete, setItemToDelete] = useState(null);
 
   const fetchDashboardData = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -41,13 +41,16 @@ export default function DashboardPage() {
     fetchDashboardData();
   }, [navigate]);
 
+  // חישוב סטטיסטיקות לדאשבורד (שווי כולל וכמות)
+  const totalValue = items.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
+
   // שלב 1: פתיחת חלון האישור הפנימי
   const openDeleteModal = (itemId, itemName) => {
     setItemToDelete({ id: itemId, name: itemName });
     setShowModal(true);
   };
 
-  // שלב 2: ביצוע המחיקה האמיתית מול Supabase לאחר אישור בתוך ה-Modal
+  // שלב 2: ביצוע המחיקה האמיתית מול Supabase
   const handleConfirmDelete = async () => {
     if (!itemToDelete) return;
 
@@ -59,57 +62,77 @@ export default function DashboardPage() {
 
       if (error) throw error;
 
-      // סגירת ה-Modal ואיפוס
       setShowModal(false);
       setItemToDelete(null);
-      
-      // רענון הרשימה על המסך
       fetchDashboardData();
     } catch (error) {
-Swal.fire({
-  icon: 'error',
-  title: 'שגיאה במחיקה',
-  text: 'לא הצלחנו למחוק את הפריט, אנא נסה שוב.',
-  confirmButtonText: 'אישור',
-  confirmButtonColor: '#10b981'
-});
+      Swal.fire({
+        icon: 'error',
+        title: 'שגיאה במחיקה',
+        text: 'לא הצלחנו למחוק את הפריט, אנא נסה שוב.',
+        confirmButtonText: 'אישור',
+        confirmButtonColor: '#10b981'
+      });
     }
-}
+  };
 
   if (loading) {
-    return <div style={{ padding: '20px' }}>טוען את לוח הבקרה...</div>;
+    return <div style={{ padding: '20px', textAlign: 'center', direction: 'rtl' }}>טוען את לוח הבקרה...</div>;
   }
 
   return (
-    <div style={{ padding: '20px', position: 'relative' }}>
+    <div style={{ padding: '20px', direction: 'rtl', maxWidth: '1200px', margin: '0 auto' }}>
       <h1>Warrantly - לוח בקרה</h1>
       <p>שלום, <strong>{user?.email}</strong>! שמחים שחזרת.</p>
+
+      {/* --- ווידג'ט כרטיסיות סיכום וסטטיסטיקה (ה"בשר" החדש) --- */}
+      <div style={{ display: 'flex', gap: '15px', marginTop: '20px', flexWrap: 'wrap' }}>
+        <div style={{ flex: '1', minWidth: '200px', padding: '15px', background: '#e8f5e9', border: '1px solid #c8e6c9', borderRadius: '8px', textAlign: 'right' }}>
+          <h5 style={{ margin: 0, color: '#2e7d32', fontSize: '14px' }}>סך שווי מוצרים מבוטחים</h5>
+          <h2 style={{ margin: '10px 0 0 0', color: '#1b5e20' }}>{totalValue.toLocaleString('he-IL')} ₪</h2>
+        </div>
+        <div style={{ flex: '1', minWidth: '200px', padding: '15px', background: '#e3f2fd', border: '1px solid #bbdefb', borderRadius: '8px', textAlign: 'right' }}>
+          <h5 style={{ margin: 0, color: '#1565c0', fontSize: '14px' }}>תעודות אחריות פעילות</h5>
+          <h2 style={{ margin: '10px 0 0 0', color: '#0d47a1' }}>{items.length} מוצרים</h2>
+        </div>
+      </div>
       
-      <h3 style={{ marginTop: '30px' }}>תעודות האחריות שלך:</h3>
+      <h3 style={{ marginTop: '30px', textAlign: 'right' }}>תעודות האחריות שלך:</h3>
 
       {items.length === 0 ? (
-        <p style={{ color: '#666', fontStyle: 'italic' }}>עדיין לא הוספת תעודות אחריות במערכת.</p>
+        <p style={{ color: '#666', fontStyle: 'italic', textAlign: 'right' }}>עדיין לא הוספת תעודות אחריות במערכת.</p>
       ) : (
-        <div style={{ display: 'grid', gap: '15px', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', marginTop: '15px' }}>
+        <div style={{ display: 'grid', gap: '15px', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', marginTop: '15px' }}>
           {items.map((item) => (
-            <div key={item.id} style={{ padding: '15px', border: '1px solid #ddd', borderRadius: '8px', backgroundColor: '#f9f9f9', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div key={item.id} style={{ padding: '15px', border: '1px solid #ddd', borderRadius: '8px', backgroundColor: '#f9f9f9', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', textAlign: 'right' }}>
               <div>
-                <h4 style={{ margin: '0 0 10px 0', color: '#333' }}>{item.name}</h4>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <h4 style={{ margin: '0 0 10px 0', color: '#333' }}>{item.name}</h4>
+                  {item.category && (
+                    <span style={{ fontSize: '11px', background: '#e0e0e0', padding: '3px 8px', borderRadius: '12px', fontWeight: 'bold', color: '#555' }}>
+                      {item.category}
+                    </span>
+                  )}
+                </div>
+                
                 <p style={{ margin: '5px 0', fontSize: '14px' }}><strong>חברה:</strong> {item.company}</p>
                 
-                {/* שים לב: כאן משתמשים ב-item.created_at או שדה תוקף קיים כדי שלא יקרוס, שנה ל-expiration_date אם יש לך */}
+                {item.price && (
+                  <p style={{ margin: '5px 0', fontSize: '14px' }}><strong>מחיר רכישה:</strong> {Number(item.price).toLocaleString('he-IL')} ₪</p>
+                )}
+                
                 <p style={{ margin: '5px 0', fontSize: '14px', color: '#e53935', marginBottom: '15px' }}>
-                  <strong>נוצר ב:</strong> {new Date(item.created_at).toLocaleDateString('he-IL')}
+                  <strong>תוקף אחריות:</strong> {item.warranty_expiration ? new Date(item.warranty_expiration).toLocaleDateString('he-IL') : 'לא הוגדר'}
                 </p>
               </div>
 
-              {/* שני הכפתורים יחד - בדיוק לפי הדרישות החדשות */}
+              {/* שני הכפתורים התחתונים */}
               <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
                 <button
                   onClick={() => navigate(`/item/${item.id}`)}
                   style={{
                     flex: 1,
-                    padding: '6px',
+                    padding: '8px',
                     backgroundColor: '#4CAF50',
                     color: 'white',
                     border: 'none',
@@ -125,7 +148,7 @@ Swal.fire({
                 <button
                   onClick={() => openDeleteModal(item.id, item.name)}
                   style={{
-                    padding: '6px 10px',
+                    padding: '8px 12px',
                     backgroundColor: '#f44336',
                     color: 'white',
                     border: 'none',
@@ -151,7 +174,7 @@ Swal.fire({
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', // רקע חצי שקוף שמחשיך את האתר מאחורה
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -164,7 +187,8 @@ Swal.fire({
             boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
             maxWidth: '400px',
             width: '90%',
-            textAlign: 'center'
+            textAlign: 'center',
+            direction: 'rtl'
           }}>
             <h3 style={{ margin: '0 0 15px 0', color: '#333' }}>אישור מחיקה</h3>
             <p style={{ marginBottom: '25px', color: '#666' }}>
