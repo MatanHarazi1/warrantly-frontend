@@ -43,20 +43,21 @@ text: 'כעת ניתן להתחבר למערכת עם הפרטים שלך',
   navigate('/login');
 });
     } catch (error) {
-      let errorMessage = error.message;
+  let errorMessage = error.message;
 
-// בדיקה אם השגיאה נובעת ממשתמש שכבר קיים במערכת
-if (error.message.includes('unique constraint') || error.message.includes('already exists')) {
-  errorMessage = 'משתמש עם פרטים אלו כבר רשום במערכת.';
-}
+  // בדיקה אם השגיאה נובעת ממשתמש שכבר קיים במערכת
+  if (error.message.includes('unique constraint') || error.message.includes('already exists')) {
+    errorMessage = 'משתמש עם פרטים אלו כבר רשום במערכת.';
+  }
 
-Swal.fire({
-  icon: 'error',
-  title: 'אופס... שגיאה בהרשמה',
-  text: errorMessage, // יציג את ההודעה הידידותית בעברית
-  confirmButtonText: 'נסה שוב',
-  confirmButtonColor: '#10b981'
-});
+  Swal.fire({
+    icon: 'error',
+    title: 'אופס... שגיאה בהרשמה',
+    text: errorMessage,
+    confirmButtonText: 'נסה שוב',
+    confirmButtonColor: '#10b981'
+  });
+
     } finally {
       setLoading(false);
     }
