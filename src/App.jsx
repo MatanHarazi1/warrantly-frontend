@@ -8,38 +8,37 @@ import ItemDetailsPage from './pages/ItemDetailsPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import ProfilePage from './pages/ProfilePage'; // <-- 1. ייבוא עמוד הפרופיל החדש
 
 function App() {
   const [profileName, setProfileName] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const getProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (user) {
-        setIsAuthenticated(true);
-        // שליפת השם המלא מטבלת profiles
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('full_name')
-          .eq('id', user.id)
-          .single();
+  const getProfile = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (user) {
+      setIsAuthenticated(true);
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
 
-        if (!error && data) {
-          setProfileName(data.full_name);
-        }
-      } else {
-        setIsAuthenticated(false);
-        setProfileName('');
+      if (!error && data) {
+        setProfileName(data.full_name);
       }
-      setLoading(false);
-    };
+    } else {
+      setIsAuthenticated(false);
+      setProfileName('');
+    }
+    setLoading(false);
+  };
 
+  useEffect(() => {
     getProfile();
 
-    // מאזין לשינויי התחברות/התנתקות ומעדכן את המצב בלייב
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setIsAuthenticated(true);
@@ -78,7 +77,6 @@ function App() {
         showConfirmButton: false,
         timer: 1500
       });
-      // ניקוי המצב המקומי ומעבר מסודר ללא רענון אלים
       setProfileName('');
       setIsAuthenticated(false);
     }
@@ -94,7 +92,7 @@ function App() {
 
   return (
     <Router>
-      <div>
+      <div style={{ direction: 'rtl' }}>
         <nav style={{
           background: '#ffffff',
           padding: '15px',
@@ -103,22 +101,21 @@ function App() {
           gap: '20px',
           alignItems: 'center'
         }}>
-          {/* לינקים שמופיעים רק אם המשתמש מחובר */}
           {isAuthenticated ? (
             <>
               <Link to="/" style={{ color: '#4CAF50', fontWeight: 'bold', textDecoration: 'none' }}>לוח בקרה</Link>
               <Link to="/add-item" style={{ color: '#4CAF50', fontWeight: 'bold', textDecoration: 'none' }}>הוספת פריט</Link>
+              {/* 2. הוספת קישור לעמוד הפרופיל ב-Navbar */}
+              <Link to="/profile" style={{ color: '#4CAF50', fontWeight: 'bold', textDecoration: 'none' }}>הפרופיל שלי</Link>
             </>
           ) : (
             <>
-              {/* לינקים שמופיעים רק אם המשתמש מנותק */}
               <Link to="/login" style={{ color: '#4CAF50', fontWeight: 'bold', textDecoration: 'none' }}>התחברות</Link>
               <Link to="/register" style={{ color: '#4CAF50', fontWeight: 'bold', textDecoration: 'none' }}>הרשמה</Link>
             </>
           )}
           
           <div style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', gap: '15px' }}>
-            {/* הצגת השם והכפתור רק אם מחוברים */}
             {isAuthenticated && (
               <>
                 {profileName && <span style={{ fontWeight: 'bold', color: '#555' }}>שלום, {profileName}</span>}
@@ -143,12 +140,12 @@ function App() {
 
         <main style={{ padding: '20px' }}>
           <Routes>
-            {/* הגנה על הראוטים: אם לא מחובר, זורק אוטומטית ל-Login */}
             <Route path="/" element={isAuthenticated ? <DashboardPage /> : <Navigate to="/login" />} />
             <Route path="/add-item" element={isAuthenticated ? <AddItemPage /> : <Navigate to="/login" />} />
             <Route path="/item/:id" element={isAuthenticated ? <ItemDetailsPage /> : <Navigate to="/login" />} />
+            {/* 3. הגדרת הראוט המאובטח של עמוד הפרופיל */}
+            <Route path="/profile" element={isAuthenticated ? <ProfilePage onProfileUpdate={getProfile} /> : <Navigate to="/login" />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
-            {/* אם מחובר ומנסה ללכת ללוגין/הרשמה, זורק אותו לדאשבורד */}
             <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" />} />
             <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/" />} />
           </Routes>
