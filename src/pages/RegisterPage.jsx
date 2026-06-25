@@ -45,9 +45,13 @@ text: 'כעת ניתן להתחבר למערכת עם הפרטים שלך',
     } catch (error) {
   let errorMessage = error.message;
 
-  // בדיקה אם השגיאה נובעת ממשתמש שכבר קיים במערכת
+  // 1. בדיקה אם המשתמש כבר קיים במערכת
   if (error.message.includes('unique constraint') || error.message.includes('already exists')) {
     errorMessage = 'משתמש עם פרטים אלו כבר רשום במערכת.';
+  } 
+  // 2. בדיקה אם יש בעיה של מפתח זר (ההרשמה ל-Auth נכשלה קודם)
+  else if (error.message.includes('violates foreign key constraint')) {
+    errorMessage = 'ההרשמה נכשלה. אנא ודא שהסיסמה מכילה לפחות 6 תווים והאימייל תקין.';
   }
 
   Swal.fire({
