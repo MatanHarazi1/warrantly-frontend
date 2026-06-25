@@ -8,7 +8,8 @@ import ItemDetailsPage from './pages/ItemDetailsPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-import ProfilePage from './pages/ProfilePage'; // <-- 1. ייבוא עמוד הפרופיל החדש
+import ProfilePage from './pages/ProfilePage';
+import LandingPage from './pages/LandingPage'; // ייבוא עמוד הנחיתה
 
 function App() {
   const [profileName, setProfileName] = useState('');
@@ -101,11 +102,14 @@ function App() {
           gap: '20px',
           alignItems: 'center'
         }}>
+          {/* הלינקים ב-Navbar */}
+          <Link to="/" style={{ color: '#4CAF50', fontWeight: 'bold', textDecoration: 'none' }}>דף הבית</Link>
+          
           {isAuthenticated ? (
             <>
-              <Link to="/" style={{ color: '#4CAF50', fontWeight: 'bold', textDecoration: 'none' }}>לוח בקרה</Link>
+              {/* סעיף 3: הלינק מוביל כעת ל-dashboard/ ולא ל-/ */}
+              <Link to="/dashboard" style={{ color: '#4CAF50', fontWeight: 'bold', textDecoration: 'none' }}>לוח בקרה</Link>
               <Link to="/add-item" style={{ color: '#4CAF50', fontWeight: 'bold', textDecoration: 'none' }}>הוספת פריט</Link>
-              {/* 2. הוספת קישור לעמוד הפרופיל ב-Navbar */}
               <Link to="/profile" style={{ color: '#4CAF50', fontWeight: 'bold', textDecoration: 'none' }}>הפרופיל שלי</Link>
             </>
           ) : (
@@ -139,15 +143,16 @@ function App() {
         </nav>
 
         <main style={{ padding: '20px' }}>
+          {/* סעיף 4: הגדרת הראוטים המעודכנת */}
           <Routes>
-            <Route path="/" element={isAuthenticated ? <DashboardPage /> : <Navigate to="/login" />} />
+            <Route path="/" element={<LandingPage isAuthenticated={isAuthenticated} />} />
+            <Route path="/dashboard" element={isAuthenticated ? <DashboardPage /> : <Navigate to="/login" />} />
             <Route path="/add-item" element={isAuthenticated ? <AddItemPage /> : <Navigate to="/login" />} />
             <Route path="/item/:id" element={isAuthenticated ? <ItemDetailsPage /> : <Navigate to="/login" />} />
-            {/* 3. הגדרת הראוט המאובטח של עמוד הפרופיל */}
             <Route path="/profile" element={isAuthenticated ? <ProfilePage onProfileUpdate={getProfile} /> : <Navigate to="/login" />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" />} />
-            <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/" />} />
+            <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/dashboard" />} />
+            <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/dashboard" />} />
           </Routes>
         </main>
       </div>
