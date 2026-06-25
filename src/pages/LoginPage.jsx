@@ -7,8 +7,18 @@ function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+const navigate = useNavigate();
 
+  // בדיקה אם המשתמש כבר מחובר, ואם כן - העברה לעמוד הבית
+  React.useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        navigate('/');
+      }
+    };
+    checkUser();
+  }, [navigate]);
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);

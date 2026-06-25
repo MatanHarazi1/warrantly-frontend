@@ -9,7 +9,16 @@ export default function RegisterPage() {
   const [fullName, setFullName] = useState(''); // שדה חדש לשם המלא
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
+  // בדיקה אם המשתמש כבר מחובר, ואם כן - העברה לעמוד הבית
+  React.useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        navigate('/');
+      }
+    };
+    checkUser();
+  }, [navigate]);
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
