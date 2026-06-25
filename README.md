@@ -1,16 +1,18 @@
-# React + Vite
+# Warrantly 📱
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### סקירה כללית
+מערכת דינמית לניהול ותיעוד תקופות אחריות של מכשירים ומוצרים דיגיטליים, המאפשרת מעקב חכם, התראות וניהול משימות תחזוקה.
 
-Currently, two official plugins are available:
+### הבעיה שהפרויקט פותר
+אנשים נוטים לאבד קבלות, לשכוח מתי פג תוקף האחריות של מוצרי חשמל ומתי צריך לבצע טיפול תקופתי במכשירים יקרים. Warrantly מרכזת הכל במקום אחד מאובטח ונגיש.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### קהל היעד
+משתמשים פרטיים המחזיקים במכשירים טכנולוגיים/מוצרי חשמל ביתיים יקרים ומעוניינים בסדר וארגון דיגיטלי.
 
-## React Compiler
+### מתחרים ובידול
+- **מתחרים:** ניהול ידני באקסל, פתקאות בטלפון או שמירת קבלות פיזיות במגירה.
+- **בידול:** Warrantly מספקת חוויית משתמש ייעודית, קישור ישיר בין המכשיר לבין משימות או בדיקות מעבדה נדרשות, ומערכת הרשאות (RLS) קשוחה המגנה על המידע האישי.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### פרטי גישה למשתמש דמו
+- **אימייל:** [הכנס כאן את המייל שאיתו נרשמת]
+- **סיסמה:** [הכנס כאן את הסיסמה של משתמש הבדיקה]
