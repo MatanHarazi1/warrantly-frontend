@@ -182,3 +182,15 @@
     border-right-color: var(--border);
   }
 }
+.logout-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0 10px;
+}
+
+.logout-btn:hover {
+  color: #ef4444; /* הופך לאדום בריחופ */
+}
