@@ -7,11 +7,15 @@ export default function DashboardPage() {
   const [user, setUser] = useState(null);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [fullName, setFullName] = useState('');
+  
+  // סטייט עבור סינון / חיפוש בלייב
+  const [searchTerm, setSearchTerm] = useState('');
 
-  // סטייט לניהול ה-Modal המעוצב שלנו
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+  
+  const navigate = useNavigate(); // מוגדר כאן למעלה בצורה תקינה!
 
   const fetchDashboardData = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -23,6 +27,18 @@ export default function DashboardPage() {
     
     setUser(user);
 
+    // שליפת השם המלא ישירות מטבלת הפרופילים
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('id', user.id)
+      .single();
+
+    if (!profileError && profileData) {
+      setFullName(profileData.full_name);
+    }
+
+    // שליפת תעודות האחריות
     const { data: itemsData, error } = await supabase
       .from('items')
       .select('*')
@@ -41,10 +57,10 @@ export default function DashboardPage() {
     fetchDashboardData();
   }, [navigate]);
 
-  // 1. חישוב סטטיסטיקות פיננסיות
+  // חישוב סטטיסטיקות פיננסיות
   const totalValue = items.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
 
-  // פונקציית עזר לחישוב צבע כרטיסייה על פי ימי תוקף האחריות (פיצ'ר 1)
+  // פונקציית עזר לחישוב צבע כרטיסייה על פי ימי תוקף האחריות
   const getWarrantyStatus = (expirationDate) => {
     if (!expirationDate) return { border: '#ddd', bg: '#f9f9f9', text: 'לא הוגדר תוקף', badgeBg: '#eee', badgeText: '#555' };
     
@@ -54,7 +70,6 @@ export default function DashboardPage() {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays <= 30) {
-      // פג תוקף או פג ב-30 ימים הקרובים - אדום
       return {
         border: '#ffcdd2',
         bg: '#ffebee',
@@ -63,7 +78,6 @@ export default function DashboardPage() {
         badgeText: '#fff'
       };
     } else if (diffDays <= 180) {
-      // מסתיימת בחצי שנה הקרובה - צהוב
       return {
         border: '#fff9c4',
         bg: '#fffde7',
@@ -72,7 +86,6 @@ export default function DashboardPage() {
         badgeText: '#333'
       };
     } else {
-      // טווח ארוך - ירוק
       return {
         border: '#c8e6c9',
         bg: '#e8f5e9',
@@ -83,7 +96,7 @@ export default function DashboardPage() {
     }
   };
 
-  // 2. חישוב והכנת נתונים לגרף העוגה (פיצ'ר 2)
+  // חישוב והכנת נתונים לגרף העוגה
   const getCategoryData = () => {
     const counts = {};
     items.forEach(item => {
@@ -102,7 +115,6 @@ export default function DashboardPage() {
 
   const categoryData = items.length > 0 ? getCategoryData() : [];
 
-  // בניית מחרוזת הציור לגרף העוגה מבוסס ה-CSS
   let accumulatedPercentage = 0;
   const gradientParts = categoryData.map(cat => {
     const start = accumulatedPercentage;
@@ -116,6 +128,16 @@ export default function DashboardPage() {
     background: `conic-gradient(${gradientParts.join(', ')})`,
     boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
   };
+
+  // לוגיקת הסינון בלייב לפי החיפוש
+  const filteredItems = items.filter(item => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(searchLower) ||
+      item.company.toLowerCase().includes(searchLower) ||
+      (item.category && item.category.toLowerCase().includes(searchLower))
+    );
+  });
 
   const openDeleteModal = (itemId, itemName) => {
     setItemToDelete({ id: itemId, name: itemName });
@@ -154,12 +176,11 @@ export default function DashboardPage() {
   return (
     <div style={{ padding: '20px', direction: 'rtl', maxWidth: '1200px', margin: '0 auto' }}>
       <h1>Warrantly - לוח בקרה</h1>
-      <p>שלום, <strong>{user?.user_metadata?.full_name || user?.email}</strong>! שמחים שחזרת.</p>
+      {/* כאן הוא מציג את השם המלא שנשלף במקום את המייל! */}
+      <p>שלום, <strong>{fullName || user?.email}</strong>! שמחים שחזרת.</p>
 
       {/* אזור הסטטיסטיקות והגרף */}
       <div style={{ display: 'flex', gap: '20px', marginTop: '20px', flexWrap: 'wrap' }}>
-        
-        {/* כרטיסיות סיכום */}
         <div style={{ flex: '1', minWidth: '280px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
           <div style={{ padding: '15px', background: '#e8f5e9', border: '1px solid #c8e6c9', borderRadius: '8px', textAlign: 'right' }}>
             <h5 style={{ margin: 0, color: '#2e7d32', fontSize: '14px' }}>סך שווי מוצרים מבוטחים</h5>
@@ -171,12 +192,10 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* גרף עוגה של התפלגות קטגוריות - מותנה בזה שיש מוצרים (פיצ'ר 2) */}
         {items.length > 0 && (
           <div style={{ flex: '1.5', minWidth: '320px', padding: '15px', border: '1px solid #eee', borderRadius: '8px', backgroundColor: '#fff', display: 'flex', alignItems: 'center', gap: '30px', flexWrap: 'wrap' }}>
             <div style={{ textAlign: 'right' }}>
               <h4 style={{ margin: '0 0 15px 0', color: '#333' }}>פילוח לפי קטגוריות</h4>
-              {/* מקרא קטגוריות */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {categoryData.map(cat => (
                   <div key={cat.name} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
@@ -186,21 +205,44 @@ export default function DashboardPage() {
                 ))}
               </div>
             </div>
-            {/* עיגול הגרף */}
             <div style={{ margin: '0 auto' }}>
               <div style={pieChartStyle}></div>
             </div>
           </div>
         )}
       </div>
+
+      {/* שורת חיפוש וסינון בלייב */}
+      {items.length > 0 && (
+        <div style={{ marginTop: '30px', textAlign: 'right' }}>
+          <input
+            type="text"
+            placeholder="🔍 חפש מוצר לפי שם, חברה או קטגוריה..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+              width: '100%',
+              maxWidth: '400px',
+              padding: '10px 15px',
+              borderRadius: '25px',
+              border: '1px solid #ccc',
+              fontSize: '14px',
+              boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
+              outline: 'none'
+            }}
+          />
+        </div>
+      )}
       
-      <h3 style={{ marginTop: '30px', textAlign: 'right' }}>תעודות האחריות שלך:</h3>
+      <h3 style={{ marginTop: '20px', textAlign: 'right' }}>תעודות האחריות שלך:</h3>
 
       {items.length === 0 ? (
         <p style={{ color: '#666', fontStyle: 'italic', textAlign: 'right' }}>עדיין לא הוספת תעודות אחריות במערכת.</p>
+      ) : filteredItems.length === 0 ? (
+        <p style={{ color: '#999', fontStyle: 'italic', textAlign: 'right' }}>לא נמצאו מוצרים המתאימים לחיפוש שלך.</p>
       ) : (
         <div style={{ display: 'grid', gap: '15px', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', marginTop: '15px' }}>
-          {items.map((item) => {
+          {filteredItems.map((item) => {
             const status = getWarrantyStatus(item.warranty_expiration);
             return (
               <div key={item.id} style={{ padding: '15px', border: `2px solid ${status.border}`, borderRadius: '8px', backgroundColor: status.bg, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', textAlign: 'right', transition: 'all 0.2s ease' }}>
@@ -220,13 +262,11 @@ export default function DashboardPage() {
                     <p style={{ margin: '5px 0', fontSize: '14px' }}><strong>מחיר רכישה:</strong> {Number(item.price).toLocaleString('he-IL')} ₪</p>
                   )}
                   
-                  {/* סטטוס אחריות דינמי בצבעים (פיצ'ר 1) */}
                   <div style={{ marginTop: '10px', marginBottom: '15px', padding: '6px', borderRadius: '4px', background: status.badgeBg, color: status.badgeText, display: 'inline-block', fontSize: '12px', fontWeight: 'bold' }}>
                     {status.text} {item.warranty_expiration && `(${new Date(item.warranty_expiration).toLocaleDateString('he-IL')})`}
                   </div>
                 </div>
 
-                {/* שני הכפתורים התחתונים */}
                 <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
                   <button
                     onClick={() => navigate(`/item/${item.id}`)}
@@ -267,7 +307,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* --- חלונית אישור מחיקה מעוצבת (Modal) --- */}
+      {/* חלונית אישור מחיקה (Modal) */}
       {showModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
           <div style={{ backgroundColor: 'white', padding: '25px', borderRadius: '8px', boxShadow: '0 4px 15px rgba(0,0,0,0.2)', maxWidth: '400px', width: '90%', textAlign: 'center', direction: 'rtl' }}>
