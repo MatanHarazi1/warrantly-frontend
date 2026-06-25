@@ -81,9 +81,10 @@ export default function DashboardPage() {
   }
 
   return (
-    <div style={{ padding: '20px', direction: 'rtl', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1>Warrantly - לוח בקרה</h1>
-      <p>שלום, <strong>{user?.email}</strong>! שמחים שחזרת.</p>
+  <div style={{ padding: '20px', direction: 'rtl', maxWidth: '1200px', margin: '0 auto' }}>
+    <h1>Warrantly - לוח בקרה</h1>
+    {/* השורה המעודכנת שתציג את השם המלא שלך מה-Metadata */}
+    <p>שלום, <strong>{user?.user_metadata?.full_name || user?.email}</strong>! שמחים שחזרת.</p>
 
       {/* --- ווידג'ט כרטיסיות סיכום וסטטיסטיקה (ה"בשר" החדש) --- */}
       <div style={{ display: 'flex', gap: '15px', marginTop: '20px', flexWrap: 'wrap' }}>
