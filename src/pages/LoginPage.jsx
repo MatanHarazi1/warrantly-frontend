@@ -50,7 +50,30 @@ const navigate = useNavigate();
 
     }
   };
+const handleForgotPassword = async () => {
+    const { value: email } = await Swal.fire({
+      title: 'שחזור סיסמה',
+      input: 'email',
+      inputLabel: 'הכנס את כתובת האימייל שלך',
+      inputPlaceholder: 'your-email@example.com',
+      confirmButtonText: 'שלח מייל שחזור',
+      confirmButtonColor: '#10b981',
+      showCancelButton: true,
+      cancelButtonText: 'ביטול'
+    });
 
+    if (email) {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: 'https://warrantly-frontend.vercel.app/reset-password',
+      });
+
+      if (error) {
+        Swal.fire({ icon: 'error', title: 'אופס...', text: 'שגיאה בשליחת המייל: ' + error.message });
+      } else {
+        Swal.fire({ icon: 'success', title: 'המייל נשלח!', text: 'בדוק את תיבת הדואר הנכנס שלך (וגם את תיבת הספאם).' });
+      }
+    }
+  };
   return (
     <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
       <h2>התחברות למערכת</h2>
@@ -64,6 +87,14 @@ const navigate = useNavigate();
             required 
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
           />
+          <div style={{ textAlign: 'left', marginBottom: '15px' }}>
+  <span 
+    onClick={handleForgotPassword} 
+    style={{ color: '#4CAF50', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 'bold' }}
+  >
+    שכחתי סיסמה?
+  </span>
+</div>
         </div>
         <div style={{ marginBottom: '15px' }}>
           <label style={{ display: 'block', marginBottom: '5px' }}>סיסמה:</label>

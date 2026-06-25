@@ -7,6 +7,7 @@ import AddItemPage from './pages/AddItemPage';
 import ItemDetailsPage from './pages/ItemDetailsPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 function App() {
   const [profileName, setProfileName] = useState('');
@@ -146,7 +147,7 @@ function App() {
             <Route path="/" element={isAuthenticated ? <DashboardPage /> : <Navigate to="/login" />} />
             <Route path="/add-item" element={isAuthenticated ? <AddItemPage /> : <Navigate to="/login" />} />
             <Route path="/item/:id" element={isAuthenticated ? <ItemDetailsPage /> : <Navigate to="/login" />} />
-            
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             {/* אם מחובר ומנסה ללכת ללוגין/הרשמה, זורק אותו לדאשבורד */}
             <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" />} />
             <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/" />} />
