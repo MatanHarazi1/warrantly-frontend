@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate, Link } from 'react-router-dom';
 
